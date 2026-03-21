@@ -1,0 +1,67 @@
+Screen {
+    layout: vertical;
+}
+
+#main_layout {
+    layout: horizontal;
+    height: 1fr;
+}
+
+#config_pane {
+    width: 30%;
+    padding: 1 2;
+    border: solid $secondary;
+}
+
+#interaction_pane {
+    width: 70%;
+    padding: 1 2;
+    border: solid $secondary;
+}
+
+.title {
+    content-align: center middle;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+.subtitle {
+    text-style: bold;
+    margin-top: 1;
+}
+
+#endpoint_buttons {
+    height: 3;
+    width: 100%;
+    margin-bottom: 1;
+}
+
+#endpoint_buttons Button {
+    width: 1fr;
+}
+
+#input_fields {
+    height: 3;
+    width: 100%;
+    margin-bottom: 1;
+}
+
+#input_fields Input {
+    width: 1fr;
+}
+
+#api_log {
+    border: panel $accent;
+    height: 1fr;
+    background: $surface;
+}
+
+.status_green {
+    color: green;
+    text-style: bold;
+}
+
+.status_red {
+    color: red;
+    text-style: bold;
+}
