@@ -1,2 +1,6 @@
 pytest
 requests-mock
+pytest-mock
+ruff
+mypy
+types-requests
