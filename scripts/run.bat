@@ -1,15 +1,14 @@
 @echo off
 setlocal
-cd /d "%~dp0\.."
+cd /d "%~dp0.."
 
-if not exist "venv\Scripts\activate.bat" (
-    echo [ERROR] Virtual environment "venv" not found.
-    echo Please create it first using: python -m venv venv
-    pause
-    exit /b 1
+if not exist "venv\Scripts\python.exe" (
+    echo ==^> Creating virtual environment "venv"...
+    python -m venv venv || exit /b 1
+    venv\Scripts\python.exe -m pip install --upgrade pip
+    venv\Scripts\pip.exe install -r requirements.txt || exit /b 1
 )
 
-echo Activating virtual environment...
 call venv\Scripts\activate.bat
 echo Launching ErgoTerm...
 python main.py

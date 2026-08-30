@@ -1,0 +1,11 @@
+[project]
+name = "ergoterm"
+version = "0.1.0"
+description = "TUI client for the Ergo IRCd HTTP API"
+requires-python = ">=3.12"
+
+[tool.ruff]
+target-version = "py312"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

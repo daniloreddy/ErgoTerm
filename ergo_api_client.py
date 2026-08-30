@@ -1,6 +1,7 @@
-import requests
 import json
-from typing import Dict, Any, Optional
+from typing import Any
+
+import httpx
 
 
 class ErgoApiClient:
@@ -15,22 +16,28 @@ class ErgoApiClient:
             "Content-Type": "application/json",
         }
 
-    def _request(
-        self, endpoint: str, data: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+    async def _request(
+        self, endpoint: str, data: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         url = f"{self.base_url}/v1/{endpoint}"
 
         try:
-            response = requests.post(url, headers=self.headers, json=data, timeout=10)
+            async with httpx.AsyncClient(timeout=10) as client:
+                response = await client.post(url, headers=self.headers, json=data)
 
             if response.status_code == 200:
                 try:
                     response_json = response.json()
+                    if not isinstance(response_json, dict):
+                        return {
+                            "success": False,
+                            "error": (
+                                "Unexpected response type: "
+                                f"{type(response_json).__name__}"
+                            ),
+                        }
                     # Application-level success check based on API documentation
-                    if (
-                        isinstance(response_json, dict)
-                        and response_json.get("success") is False
-                    ):
+                    if response_json.get("success") is False:
                         if "error" not in response_json:
                             response_json["error"] = (
                                 response_json.get("errorCode") or "Request unsuccessful"
@@ -51,34 +58,36 @@ class ErgoApiClient:
                     "error": f"HTTP Error {response.status_code}: {response.text[:100]}",
                 }
 
-        except requests.exceptions.RequestException as e:
+        except httpx.HTTPError as e:
             return {"success": False, "error": f"Network/Request Error: {e}"}
 
     # --- Endpoint Implementations ---
 
-    def check_auth(self, account_name: str, passphrase: str) -> Dict[str, Any]:
+    async def check_auth(self, account_name: str, passphrase: str) -> dict[str, Any]:
         """Verifies account credentials."""
         data = {"accountName": account_name, "passphrase": passphrase}
-        return self._request("check_auth", data=data)
+        return await self._request("check_auth", data=data)
 
-    def get_account_details(self, account_name: str) -> Dict[str, Any]:
+    async def get_account_details(self, account_name: str) -> dict[str, Any]:
         """Fetches details for a specific account."""
         data = {"accountName": account_name}
-        return self._request("account_details", data=data)
+        return await self._request("account_details", data=data)
 
-    def get_server_status(self) -> Dict[str, Any]:
+    async def get_server_status(self) -> dict[str, Any]:
         """Fetches the current status of the Ergo server."""
-        return self._request("status")
+        return await self._request("status")
 
-    def rehash_server(self) -> Dict[str, Any]:
+    async def rehash_server(self) -> dict[str, Any]:
         """Triggers a server rehash (configuration reload)."""
-        return self._request("rehash")
+        return await self._request("rehash")
 
-    def register_account(self, account_name: str, passphrase: str) -> Dict[str, Any]:
+    async def register_account(
+        self, account_name: str, passphrase: str
+    ) -> dict[str, Any]:
         """Registers a new NickServ account."""
         data = {"accountName": account_name, "passphrase": passphrase}
-        return self._request("saregister", data=data)
+        return await self._request("saregister", data=data)
 
-    def list_accounts(self) -> Dict[str, Any]:
+    async def list_accounts(self) -> dict[str, Any]:
         """Fetches a list of all registered accounts."""
-        return self._request("account_list")
+        return await self._request("account_list")

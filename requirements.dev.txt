@@ -1,6 +1,5 @@
 pytest
-requests-mock
-pytest-mock
+pytest-asyncio
+respx
 ruff
 mypy
-types-requests

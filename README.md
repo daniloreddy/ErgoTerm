@@ -21,18 +21,20 @@ This application provides a user-friendly way for server administrators to manag
 
 ## Requirements
 
-The project requires Python 3.8+ and the following dependencies:
+The project requires Python 3.12+ and the following dependencies:
 
 ### Runtime
-- `requests`: For handling HTTP communication.
+- `httpx`: For asynchronous HTTP communication.
 - `textual`: For the terminal user interface.
 
 ### Development/Testing
-- `pytest`: Testing framework.
-- `requests-mock`: For mocking API responses.
-- `pytest-mock`: For advanced mocking capabilities.
+- `pytest` + `pytest-asyncio`: Testing framework (async test support).
+- `respx`: For mocking `httpx` API responses.
 
 ## Installation
+
+The launcher scripts (`scripts/run.*`, `scripts/checks.*`) auto-create `venv` and
+install dependencies on first run, so the manual steps below are optional:
 
 1.  **Clone the repository** (or copy the files).
 2.  **Create a virtual environment**:
@@ -53,7 +55,8 @@ The project requires Python 3.8+ and the following dependencies:
 
 1.  Start the application:
     ```powershell
-    python main.py
+    scripts\run.bat        # Windows  (or: python main.py)
+    bash scripts/run.sh    # Linux/macOS
     ```
 2.  In the **API Configuration** pane:
     - Enter your Ergo API Base URL (e.g., `http://127.0.0.1:8089`).
@@ -63,7 +66,13 @@ The project requires Python 3.8+ and the following dependencies:
 
 ## Testing
 
-To run the unit test suite:
+To run lint, format check, type check and the unit test suite:
+```powershell
+scripts\checks.bat        # Windows
+bash scripts/checks.sh    # Linux/macOS
+```
+
+Or just the tests:
 ```powershell
 pytest test_api_client.py
 ```

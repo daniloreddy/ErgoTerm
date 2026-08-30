@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
-
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd "$DIR/.."
+cd "$(dirname "$0")/.."
 
 if [ -d "venv" ]; then
     VENV_DIR="venv"
@@ -26,8 +24,17 @@ fi
 
 if [ -n "$CREATED" ]; then
     python -m pip install --upgrade pip
-    pip install -r requirements.txt
+    pip install -r requirements.txt -r requirements.dev.txt
 fi
 
-echo "Launching ErgoTerm..."
-exec python main.py
+echo "==> ruff format (check)"
+ruff format --check ergo_api_client.py main.py test_api_client.py
+
+echo "==> ruff check"
+ruff check ergo_api_client.py main.py test_api_client.py
+
+echo "==> mypy"
+mypy ergo_api_client.py main.py
+
+echo "==> pytest"
+python -m pytest test_api_client.py -v
